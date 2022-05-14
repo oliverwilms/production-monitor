@@ -1,0 +1,51 @@
+<html>
+<head>
+<meta http-equiv="refresh" content="10">
+<!-- Put your page Title here -->
+<title>	Production Monitor </title>
+<style type="text/css">
+body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
+.Lamp {
+	text-align: center;
+	color: darkblue;
+	width: 20px;
+	min-width: 20px;
+	font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+<table><tr><td valign='top'>
+<table border=1>
+<caption>Incoming</caption>
+<script language="Cache" runat="Server">
+Set tClassname = "User.ProductionMonitor"
+Set tClassMethod = "OutputTablePM"
+Set tParamBucket = "BusinessService"
+Set tReturn = $CLASSMETHOD(tClassname,tClassMethod,tParamBucket)
+Write "</table>",!
+</script>
+</td><td valign='top'>
+<table border=1>
+<caption>Queues</caption>
+<script language="Cache" runat="Server">
+Set tClassname = "User.ProductionMonitor"
+Set tClassMethod = "OutputTablePMQ"
+Set tParamBucket = ""
+Set tReturn = $CLASSMETHOD(tClassname,tClassMethod,tParamBucket)
+Write "</table>",!
+</script>
+</td><td valign='top'>
+<table border=1>
+<caption>Outgoing</caption>
+<script language="Cache" runat="Server">
+Set tClassname = "User.ProductionMonitor"
+Set tClassMethod = "OutputTablePM"
+Set tParamBucket = "BusinessOperation"
+Set tReturn = $CLASSMETHOD(tClassname,tClassMethod,tParamBucket)
+Write "</table>",!
+</script>
+</td></tr></table>
+</body>
+</html>
