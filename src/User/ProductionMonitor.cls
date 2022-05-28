@@ -1,5 +1,3 @@
-Include (Ensemble, EnsUI)
-
 Class User.ProductionMonitor
 {
 
@@ -38,17 +36,18 @@ ClassMethod GetHostInfo(
 	Set tSC = $$$OK
 	Try {
 		#; summary
+	/*
 		Kill tResult
 		Do ##class(EnsPortal.UtilsMonitor).GetServiceSummary(.tResult,0)
 		//zw tResult
-	/*	
+
 		Set pSummary("BusinessService",1) = $LB($$$Text("Last Activity"),$G(tResult("1LastActivityTime")))
 		Set pSummary("BusinessService",2) = $LB($$$Text("Completed"),$FN($G(tResult("2ActivitiesCompleted")),","))
-	*/
+
 		Kill tResult
 		Do ##class(EnsPortal.UtilsMonitor).GetOperationSummary(.tResult,0)
 		//zw tResult
-	/*
+
 		Set pSummary("BusinessOperation",1) = $LB($$$Text("Last Activity"),$G(tResult("1LastActivityTime")))
 		Set pSummary("BusinessOperation",2) = $LB($$$Text("Completed"),$FN($G(tResult("2ActivitiesCompleted")),","))
 		Set pSummary("BusinessOperation",3) = $LB($$$Text("In Progress"),$FN($G(tResult("3MessagesInProgress")),","))
@@ -65,15 +64,7 @@ ClassMethod GetHostInfo(
 
 		Set filteredItemCount = 0
 		Set filteredErrCount = 0
-	/*	
-		#; List all the categories this user is allowed to view
-		If ..allowedCategories '= "" {
-			For c = 1:1:$Length(..allowedCategories,",") {
-				Set catIndex = $Piece(..allowedCategories,",",c)
-				Set tViewableCategoryArray(catIndex) = 1
-			}
-		}
-	*/
+
 		While (tRS.Next(.tSC)) {  Quit:$$$ISERR(tSC)
 		
 			Set tBucket = tRS.Data("Type")
@@ -104,17 +95,7 @@ ClassMethod GetHostInfo(
 							}
 						}
 					}
-				} else {
-				/*	Set tCleanedCategories=""
-					For i=1:1:$Length(tCategories,",") {
-						Set tCleanedCategories = tCleanedCategories_"," _ $ZStrip($Piece(tCategories,",",i),"<>WC")
-					}
-					Set tCategories = tCleanedCategories_","
-					Set tCat = ","_%page.currCategory_","
-					If tCategories [ tCat {
-						Set tMatch = 1
-					}
-			*/	}
+				}
 				If 'tMatch {
 					Set filteredItemCount = filteredItemCount+1
 					Set tState = $G(^CacheTemp.EnsHostMonitor($namespace,tName,"%Status"),-1)
@@ -146,9 +127,6 @@ ClassMethod GetHostInfo(
 				Set tIcon = "-"
 				Set tLamp = "#FFFF80"
 			}
-			//Set tLamp = $Case(tStatus,"OK":"#80FF80", "ERROR":"#FF4040", "INACTIVE":"#FFFF80", :"#808080")
-			//Set tIcon = $Case(tStatus,"ERROR":"!", "INACTIVE":"-", "DISABLED":"X", :"")
-			//Set tMsg = $Case(tStatus,"OK":$$$Text("OK"), "ERROR":$$$Text("Error"), "INACTIVE":$$$Text("Inactive"), "":"", :tStatus)
 
 			#; Adapter/Connection State
 			Set tCIcon = "-"
@@ -165,8 +143,6 @@ ClassMethod GetHostInfo(
 				Set tCIcon = "o"
 				Set tCLamp = "#FFFF80"
 			}
-			//Set tCLamp = $S(tConnState[" connected":"#80FF80", tConnState[" disconnected":"#FF4040", tConnState[" listening":"#FFFF80", 1:"#808080")
-			//Set tCIcon = $S(tConnState[" connected":"+", tConnState[" disconnected":"x", tConnState[" listening":"o", 1:"-")
 
 			#; compose localized Connection State text
 			Set (nConn,nDis,nListen)=0
@@ -273,6 +249,68 @@ ClassMethod GetQueueInfo(
 		Set tSC = ex.AsStatus()
 	}
 	Quit tSC
+}
+
+ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
+{
+	Set tSC = ..GetHostInfo(.pInfo)
+	&sql(SELECT Max(ID)- 10000000 INTO :tIDFrom From ENS.MessageHeader )
+	If (pBucket = "") Set pBucket = $Order(pInfo(pBucket))
+	Set tSort1 = ""
+	If pBucket="BusinessService" {
+		Write "<tr>",!
+		Write "<th>Stat </th>"
+		Write "<th>AStat </th>"
+		Write "<th><b>Business Service</b></th>"	
+		Write "<th><b>Last Sucessful Message</b></th>"	
+		Write "</tr>",!
+	}
+
+	If pBucket="BusinessOperation" {
+		Write "<tr>",!
+		Write "<th>Stat</th>"
+		Write "<th>AStat</th>"
+		Write "<th><b>Business Operation</b></th>"		
+		Write "</tr>",!
+	}
+
+	For {
+		Set tSort1 = $Order(pInfo(pBucket,tSort1))
+		If (tSort1 = "") { QUIT }
+		Set tSort2 = ""
+		For {
+			Set tSort2 = $Order(pInfo(pBucket,tSort1,tSort2))
+			If (tSort2 = "") { QUIT }
+			Set tSort3 = ""
+			For {
+				Set tSort3 = $Order(pInfo(pBucket,tSort1,tSort2,tSort3),1,tData)
+				If (tSort3 = "") || ($ListGet(tData,9)=0) { QUIT }
+				Set tID = $ListGet(tData,1)
+				Set tName = $ListGet(tData,2)
+				Set tMsg = $ListGet(tData,3)
+				Set tLamp = $ListGet(tData,4)
+				Set tIcon = $ListGet(tData,5)
+				Set tCount = $ListGet(tData,6)
+				Set tCLamp = $ListGet(tData,7)
+				Set tCIcon = $ListGet(tData,8)
+				Set tCMsg = $ListGet(tData,9)
+
+			  If ((tMsg="ERROR") || (tMsg="INACTIVE") || (tMsg="RETRY")) {
+				Write "<tr>",!
+				Write "<td class='Lamp' style='background:",tLamp,";'>",tIcon,"</td>",!
+				Write "<td class='Lamp' style='background:",tCLamp,";'>",tCIcon,"</td>",!
+				Write "<td>",tID ,"</td>",!
+				//get last message 
+				If pBucket="BusinessService" {
+				  &sql(SELECT CONVERT(VARCHAR(50),MAX(TimeCreated), 0) INTO :tLastMessage FROM ENS.MessageHeader H WHERE H.ID >:tIDFrom AND SourceBusinessType =1 AND SourceConfigName =:tID AND STATUS=9)
+				  Write "<td>",tLastMessage,"</td>",!
+				}
+				Write "</tr>",!
+			  }
+			}
+		}
+	}
+	Quit $$$OK
 }
 
 ClassMethod OutputTablePM(pBucket As %String = "") As %Status
