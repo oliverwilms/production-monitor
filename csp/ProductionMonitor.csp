@@ -92,7 +92,7 @@ body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
 				</table>
 			</td><td valign='top'>
 				<table border=1>
-					<caption>Queues</caption>
+					<caption><h4>Queues</h4></caption>
 					<script language="Cache" runat="Server">
 					Set tClassname = "User.ProductionMonitor"
 					Set tClassMethod = "OutputTablePMQ"
@@ -102,7 +102,7 @@ body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
 				</table>
 			</td><td valign='top'>
 				<table border=1>
-					<caption>Outgoing</caption>
+					<caption><h4>Outgoing</h4></caption>
 					<script language="Cache" runat="Server">
 					Set tClassname = "User.ProductionMonitor"
 					Set tClassMethod = "OutputTablePM"
