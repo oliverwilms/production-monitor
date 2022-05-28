@@ -1,5 +1,6 @@
-Class User.ProductionMonitor Extends %Persistent
+Class User.ProductionMonitor
 {
+
 ClassMethod GetConfigItems() As %Status
 {
 	Set tStatement = ##class(%SQL.Statement).%New()
@@ -28,11 +29,29 @@ ClassMethod GetConfigItems() As %Status
 
 /// Get information about currently running hosts and place it into
 /// <var>pInfo</var> array.
-ClassMethod GetHostInfo(ByRef pInfo, ByRef pSummary) As %Status
+ClassMethod GetHostInfo(
+	ByRef pInfo,
+	ByRef pSummary) As %Status
 {
 	Set tSC = $$$OK
 	Try {
+		#; summary
+	/*
+		Kill tResult
+		Do ##class(EnsPortal.UtilsMonitor).GetServiceSummary(.tResult,0)
+		//zw tResult
 
+		Set pSummary("BusinessService",1) = $LB($$$Text("Last Activity"),$G(tResult("1LastActivityTime")))
+		Set pSummary("BusinessService",2) = $LB($$$Text("Completed"),$FN($G(tResult("2ActivitiesCompleted")),","))
+
+		Kill tResult
+		Do ##class(EnsPortal.UtilsMonitor).GetOperationSummary(.tResult,0)
+		//zw tResult
+
+		Set pSummary("BusinessOperation",1) = $LB($$$Text("Last Activity"),$G(tResult("1LastActivityTime")))
+		Set pSummary("BusinessOperation",2) = $LB($$$Text("Completed"),$FN($G(tResult("2ActivitiesCompleted")),","))
+		Set pSummary("BusinessOperation",3) = $LB($$$Text("In Progress"),$FN($G(tResult("3MessagesInProgress")),","))
+	*/
 		#; host information
 		#; run query to get stats, then group into buckets
 		#dim tRS As %ResultSet
@@ -77,7 +96,6 @@ ClassMethod GetHostInfo(ByRef pInfo, ByRef pSummary) As %Status
 						}
 					}
 				}
-				
 				If 'tMatch {
 					Set filteredItemCount = filteredItemCount+1
 					Set tState = $G(^CacheTemp.EnsHostMonitor($namespace,tName,"%Status"),-1)
@@ -173,7 +191,9 @@ ClassMethod GetHostInfo(ByRef pInfo, ByRef pSummary) As %Status
 
 /// Get information about currently running queues and place it into
 /// <var>pInfo</var> array under "Queues".
-ClassMethod GetQueueInfo(ByRef pInfo, ByRef pSummary) As %Status
+ClassMethod GetQueueInfo(
+	ByRef pInfo,
+	ByRef pSummary) As %Status
 {
 	Set tSC = $$$OK
 	Try {
@@ -234,28 +254,26 @@ ClassMethod GetQueueInfo(ByRef pInfo, ByRef pSummary) As %Status
 ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
 {
 	Set tSC = ..GetHostInfo(.pInfo)
-	&sql(SELECT Max(ID)- 10000000 INTO :tIDFrom fROM ENS.MessageHeader )
+	&sql(SELECT Max(ID)- 10000000 INTO :tIDFrom From ENS.MessageHeader )
 	If (pBucket = "") Set pBucket = $Order(pInfo(pBucket))
 	Set tSort1 = ""
-	if pBucket="BusinessService"
-	{
-	Write "<tr>",!
-	Write "<th>Stat </th>"
-	Write "<th>AStat </th>"
-	Write "<th><b>Business Service</b></th>"	
-	Write "<th><b>Last Sucessful Message</b></th>"	
-	Write "</tr>",!
+	If pBucket="BusinessService" {
+		Write "<tr>",!
+		Write "<th>Stat </th>"
+		Write "<th>AStat </th>"
+		Write "<th><b>Business Service</b></th>"	
+		Write "<th><b>Last Sucessful Message</b></th>"	
+		Write "</tr>",!
 	}
-	
-	if pBucket="BusinessOperation"
-	{
-	Write "<tr>",!
-	Write "<th>Stat</th>"
-	Write "<th>AStat</th>"
-	Write "<th><b>Business Service</b></th>"		
-	Write "</tr>",!
+
+	If pBucket="BusinessOperation" {
+		Write "<tr>",!
+		Write "<th>Stat</th>"
+		Write "<th>AStat</th>"
+		Write "<th><b>Business Operation</b></th>"		
+		Write "</tr>",!
 	}
-		
+
 	For {
 		Set tSort1 = $Order(pInfo(pBucket,tSort1))
 		If (tSort1 = "") { QUIT }
@@ -266,7 +284,7 @@ ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
 			Set tSort3 = ""
 			For {
 				Set tSort3 = $Order(pInfo(pBucket,tSort1,tSort2,tSort3),1,tData)
-				If (tSort3 = "") || ($ListGet(tData,9)=0){ QUIT }
+				If (tSort3 = "") || ($ListGet(tData,9)=0) { QUIT }
 				Set tID = $ListGet(tData,1)
 				Set tName = $ListGet(tData,2)
 				Set tMsg = $ListGet(tData,3)
@@ -276,19 +294,55 @@ ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
 				Set tCLamp = $ListGet(tData,7)
 				Set tCIcon = $ListGet(tData,8)
 				Set tCMsg = $ListGet(tData,9)
-				
-				if ((tMsg="ERROR")||(tMsg="INACTIVE") || (tMsg="RETRY")){
+
+			  If ((tMsg="ERROR") || (tMsg="INACTIVE") || (tMsg="RETRY")) {
 				Write "<tr>",!
 				Write "<td class='Lamp' style='background:",tLamp,";'>",tIcon,"</td>",!
 				Write "<td class='Lamp' style='background:",tCLamp,";'>",tCIcon,"</td>",!
 				Write "<td>",tID ,"</td>",!
 				//get last message 
-				if pBucket="BusinessService"{
-				&sql(SELECT CONVERT(VARCHAR(50),MAX(TimeCreated), 0) into :tLastMessage FROM ENS.MessageHeader H WHERE H.ID >:tIDFrom AND SourceBusinessType =1 AND SourceConfigName =:tID AND STATUS=9 )
-				Write "<td>",tLastMessage,"</td>",!}
-				Write "</tr>",!
+				If pBucket="BusinessService" {
+				  &sql(SELECT CONVERT(VARCHAR(50),MAX(TimeCreated), 0) INTO :tLastMessage FROM ENS.MessageHeader H WHERE H.ID >:tIDFrom AND SourceBusinessType =1 AND SourceConfigName =:tID AND STATUS=9)
+				  Write "<td>",tLastMessage,"</td>",!
 				}
-			
+				Write "</tr>",!
+			  }
+			}
+		}
+	}
+	Quit $$$OK
+}
+
+ClassMethod OutputTablePM(pBucket As %String = "") As %Status
+{
+	Set tSC = ..GetHostInfo(.pInfo)
+	If (pBucket = "") Set pBucket = $Order(pInfo(pBucket))
+	Set tSort1 = ""
+	For {
+		Set tSort1 = $Order(pInfo(pBucket,tSort1))
+		If (tSort1 = "") { QUIT }
+		Set tSort2 = ""
+		For {
+			Set tSort2 = $Order(pInfo(pBucket,tSort1,tSort2))
+			If (tSort2 = "") { QUIT }
+			Set tSort3 = ""
+			For {
+				Set tSort3 = $Order(pInfo(pBucket,tSort1,tSort2,tSort3),1,tData)
+				If (tSort3 = "") { QUIT }
+				Set tID = $ListGet(tData,1)
+				Set tName = $ListGet(tData,2)
+				Set tMsg = $ListGet(tData,3)
+				Set tLamp = $ListGet(tData,4)
+				Set tIcon = $ListGet(tData,5)
+				Set tCount = $ListGet(tData,6)
+				Set tCLamp = $ListGet(tData,7)
+				Set tCIcon = $ListGet(tData,8)
+				Set tCMsg = $ListGet(tData,9)
+				Write "<tr>",!
+				Write "<td class='Lamp' style='background:",tLamp,";'>",tIcon,"</td>",!
+				Write "<td class='Lamp' style='background:",tCLamp,";'>",tCIcon,"</td>",!
+				Write "<td>",tID,"</td>",!
+				Write "<td style='text-align:right;' nowrap title='Number of messages processed since production start'>&nbsp;",tCount,"&nbsp;</td></tr>",!
 			}
 		}
 	}
@@ -317,12 +371,10 @@ ClassMethod OutputTablePMQ(pBucket As %String = "") As %Status
 				Set tLamp = $ListGet(tData,4)
 				Set tIcon = $ListGet(tData,5)
 				Set tCount = $ListGet(tData,6)
-				if tCount>=1{
 				Write "<tr>",!
 				Write "<td class='Lamp' style='background:",tLamp,";'>",tIcon,"</td>",!
 				Write "<td>",tID,"</td>",!
 				Write "<td style='text-align:right;' nowrap title='Number of messages in this queue'>&nbsp;",tCount,"&nbsp;</td></tr>",!
-				}
 			}
 		}
 	}
@@ -358,21 +410,6 @@ ClassMethod Test() As %Status
 		Write $Get(tConfigName)," ",$Get(tEnabled),!
 	}
 	Quit tSC
-}
-
-Storage Default
-{
-<Data name="ProductionMonitorDefaultData">
-<Value name="1">
-<Value>%%CLASSNAME</Value>
-</Value>
-</Data>
-<DataLocation>^Component5976.ProductionM5A6AD</DataLocation>
-<DefaultData>ProductionMonitorDefaultData</DefaultData>
-<IdLocation>^Component5976.ProductionM5A6AD</IdLocation>
-<IndexLocation>^Component5976.ProductionM5A6AI</IndexLocation>
-<StreamLocation>^Component5976.ProductionM5A6AS</StreamLocation>
-<Type>%Library.CacheStorage</Type>
 }
 
 }
