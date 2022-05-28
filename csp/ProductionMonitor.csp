@@ -1,6 +1,9 @@
 <html>
 <head>
 <meta http-equiv="refresh" content="30">
+<script language="Cache" runat="Server">
+Set tSC = ##class(User.ProductionMonitor).GetProductionStatus(.pName,.pState)
+</script>
 <!-- Put your page Title here -->
 <title>	Production Monitor </title>
 <style type="text/css">
@@ -75,7 +78,7 @@ body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
 		<div class="portalLogoBox">
 			<img class="portalLogo" src="portal/HealthShareLogo210x50.png" alt="HealthShare">
 		</div>
-		<div class="portalName">IRIS Interface Monitor</div>
+		<div class="portalName">#($Get(pName,"IRIS Interface Monitor"))#</div>
 	</div>
 
 	<div id="content_area" class="content_area">		
