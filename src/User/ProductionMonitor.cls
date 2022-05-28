@@ -172,6 +172,21 @@ ClassMethod GetHostInfo(
 	Quit tSC
 }
 
+/// This method returns the production status via the output parameters.
+/// pProductionName: Returns the production name when the status is running, suspended or troubled.
+/// pState: Outputs production status. The valid values are:
+///          $$$eProductionStateRunning
+///          $$$eProductionStateStopped
+///          $$$eProductionStateSuspended
+///          $$$eProductionStateTroubled
+ClassMethod GetProductionStatus(
+	Output pProductionName As %String,
+	Output pState As %String) As %Status
+{
+	Set tSC = ##class(Ens.Director).GetProductionStatus(.pProductionName, .pState)
+	Quit tSC
+}
+
 /// Get information about currently running queues and place it into
 /// <var>pInfo</var> array under "Queues".
 ClassMethod GetQueueInfo(
