@@ -112,7 +112,7 @@ body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
 				</table>
 			</td></tr>
 		</table>
-		<p><i>Tie Server: </i> #($piece($system,":"))# <i> Status:</i> #($system.Mirror.GetStatus())#</p>
+		<p><i>Server: </i> #($piece($system,":"))# <i> Status:</i> #($system.Mirror.GetStatus())#</p>
 	</div><!--End content -->
 </div> <!--End Container -->
 </body>
