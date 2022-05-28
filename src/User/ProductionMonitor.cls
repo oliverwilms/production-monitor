@@ -35,23 +35,6 @@ ClassMethod GetHostInfo(
 {
 	Set tSC = $$$OK
 	Try {
-		#; summary
-	/*
-		Kill tResult
-		Do ##class(EnsPortal.UtilsMonitor).GetServiceSummary(.tResult,0)
-		//zw tResult
-
-		Set pSummary("BusinessService",1) = $LB($$$Text("Last Activity"),$G(tResult("1LastActivityTime")))
-		Set pSummary("BusinessService",2) = $LB($$$Text("Completed"),$FN($G(tResult("2ActivitiesCompleted")),","))
-
-		Kill tResult
-		Do ##class(EnsPortal.UtilsMonitor).GetOperationSummary(.tResult,0)
-		//zw tResult
-
-		Set pSummary("BusinessOperation",1) = $LB($$$Text("Last Activity"),$G(tResult("1LastActivityTime")))
-		Set pSummary("BusinessOperation",2) = $LB($$$Text("Completed"),$FN($G(tResult("2ActivitiesCompleted")),","))
-		Set pSummary("BusinessOperation",3) = $LB($$$Text("In Progress"),$FN($G(tResult("3MessagesInProgress")),","))
-	*/
 		#; host information
 		#; run query to get stats, then group into buckets
 		#dim tRS As %ResultSet
