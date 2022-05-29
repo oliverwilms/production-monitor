@@ -89,6 +89,7 @@ body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
 					<script language="Cache" runat="Server">
 					Set tClassname = "User.ProductionMonitor"
 					Set tClassMethod = "OutputTableIncomingOutgoing"
+					Set tClassMethod = "OutputTablePM"
 					Set tParamBucket = "BusinessService"
 					Set tReturn = $CLASSMETHOD(tClassname,tClassMethod,tParamBucket)
 					</script>
