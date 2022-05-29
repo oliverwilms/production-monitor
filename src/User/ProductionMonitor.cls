@@ -282,7 +282,8 @@ ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
 			Set tSort3 = ""
 			For {
 				Set tSort3 = $Order(pInfo(pBucket,tSort1,tSort2,tSort3),1,tData)
-				If (tSort3 = "") || ($ListGet(tData,9)=0) { QUIT }
+				If (tSort3 = "") { QUIT }
+				//If (tSort3 = "") || ($ListGet(tData,9)=0) { QUIT }
 				Set tID = $ListGet(tData,1)
 				Set tName = $ListGet(tData,2)
 				Set tMsg = $ListGet(tData,3)
@@ -293,7 +294,7 @@ ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
 				Set tCIcon = $ListGet(tData,8)
 				Set tCMsg = $ListGet(tData,9)
 
-			  If ((tMsg="ERROR") || (tMsg="INACTIVE") || (tMsg="RETRY")) {
+			  //If ((tMsg="ERROR") || (tMsg="INACTIVE") || (tMsg="RETRY")) {
 				Write "<tr>",!
 				Write "<td class='Lamp' style='background:",tLamp,";'>",tIcon,"</td>",!
 				Write "<td class='Lamp' style='background:",tCLamp,";'>",tCIcon,"</td>",!
@@ -304,7 +305,7 @@ ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
 				  Write "<td>",tLastMessage,"</td>",!
 				}
 				Write "</tr>",!
-			  }
+			  //}
 			}
 		}
 	}
