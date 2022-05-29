@@ -21,3 +21,11 @@ zpm "install production-monitor"
 You can easily install production-manager with ZPM. I have done it with iris-mail. See screenshot below:
 
 ![screenshot](https://github.com/oliverwilms/bilder/blob/main/mail_productionMonitor.png)
+
+Below is Production Monitor for test-data Production using OutputTablePM view
+
+![screenshot](https://github.com/oliverwilms/bilder/blob/main/OutputTablePM.png)
+
+Below is Production Monitor for test-data Production using OutputTableIncomingOutgoing view
+
+![screenshot](https://github.com/oliverwilms/bilder/blob/main/OutputTableIncomingOutgoing.png)
