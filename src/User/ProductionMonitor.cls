@@ -198,6 +198,29 @@ ClassMethod GetHostInfo(
 	Quit tSC
 }
 
+ClassMethod GetItemInfo(
+	ByRef pInfo,
+	ByRef pSummary) As %Status
+{
+	Set tSC = $$$OK
+	If ($Get(pProd) = "") {
+		Set pProd = ##class(Ens.Director).GetActiveProductionName()
+	}
+	Set tProduction = ##class(Ens.Config.Production).%OpenId(pProd)
+	Set tSC = ##class(Ens.Director).getProductionItems(tProduction,.pDefinition,.pAutoAdd)
+	Set tConfigName = ""
+	For {
+		Set tConfigName = $Order(pDefinition(tConfigName))
+		If (tConfigName = "") { Quit }
+        Set tBusinessType = $Get(pDefinition(tConfigName,"BusinessType"))
+        If (tBusinessType = "") Set tBusinessType = "Unknown"
+        Set tClassName = $Get(pDefinition(tConfigName,"ClassName"))
+        Set tEnabled = $Get(pDefinition(tConfigName,"IsEnabled"))
+		Set pInfo(tBusinessType,tConfigName) = $LB(tClassName,tEnabled)
+	}
+	Quit tSC
+}
+
 ClassMethod GetItems(
 	ByRef pDefinition As %String,
 	ByRef pAutoAdd As %String) As %Status
