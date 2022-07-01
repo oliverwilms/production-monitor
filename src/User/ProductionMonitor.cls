@@ -198,11 +198,11 @@ ClassMethod GetHostInfo(
 	Quit tSC
 }
 
-ClassMethod GetItemInfo(
-	ByRef pInfo,
-	ByRef pSummary) As %Status
+ClassMethod GetItemInfo(ByRef pInfo, ByRef pSummary) As %Status
 {
 	Set tSC = $$$OK
+	&sql(SELECT Max(ID) - 10000000 INTO :tIDFrom From ENS.MessageHeader)
+	If ($Get(tIDFrom,0) < 1) Set tIDFrom = 0
 	If ($Get(pProd) = "") {
 		Set pProd = ##class(Ens.Director).GetActiveProductionName()
 	}
@@ -212,14 +212,20 @@ ClassMethod GetItemInfo(
 	For {
 		Set tConfigName = $Order(pDefinition(tConfigName))
 		If (tConfigName = "") { Quit }
-        Set tBusinessType = $Get(pDefinition(tConfigName,"BusinessType"))
-        If (tBusinessType = "") Set tBusinessType = "Unknown"
-        Set tClassName = $Get(pDefinition(tConfigName,"ClassName"))
-        Set tEnabled = $Get(pDefinition(tConfigName,"IsEnabled"))
-		Set pInfo(tBusinessType,tConfigName) = $LB(tClassName,tEnabled)
+		Set tBusinessType = $Get(pDefinition(tConfigName,"BusinessType"))
+		If (tBusinessType = "") Set tBusinessType = "Unknown"
+		Set tClassName = $Get(pDefinition(tConfigName,"ClassName"))
+		Set tEnabled = $Get(pDefinition(tConfigName,"IsEnabled"))
+        //If pBucket="BusinessService" {
+		Set tID = tConfigName 
+		&sql(SELECT CONVERT(VARCHAR(50),MAX(TimeCreated), 0) INTO :tLastMessage FROM ENS.MessageHeader H WHERE H.ID >:tIDFrom AND SourceBusinessType=1 AND SourceConfigName=:tID AND STATUS=9)
+		//}
+		//Set pInfo(tBusinessType,tConfigName) = $LB(tClassName,tEnabled,tLastMessage)
+		Set pInfo(tConfigName) = $LB(tBusinessType,tClassName,tEnabled,tLastMessage)
 	}
 	Quit tSC
 }
+
 
 ClassMethod GetItems(
 	ByRef pDefinition As %String,
