@@ -198,6 +198,19 @@ ClassMethod GetHostInfo(
 	Quit tSC
 }
 
+ClassMethod GetProductionSettings(
+	pProd As %String,
+	Output pSettings) As %Status
+{
+	Set tSC = $$$OK
+	If ($Get(pProd) = "") {
+		Set pProd = ##class(Ens.Director).GetActiveProductionName()
+	}
+	Set tSC = ##class(Ens.Director).GetProductionSettings($Get(pProd),.pSettings)
+	ZW
+	Quit tSC
+}
+
 /// This method returns the production status via the output parameters.
 /// pProductionName: Returns the production name when the status is running, suspended or troubled.
 /// pState: Outputs production status. The valid values are:
