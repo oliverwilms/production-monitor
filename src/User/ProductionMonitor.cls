@@ -1,6 +1,32 @@
 Class User.ProductionMonitor
 {
 
+ClassMethod CreateDocumentation(
+	pProduction As %String = "",
+	pIntro As %Boolean = 1,
+	pFormat As %String,
+	Output LogFileName As %String,
+	Output URL As %String,
+	Output BookName As %String,
+	PDFFileName As %String,
+	PDFRenderer As %String,
+	ByRef Params As %String,
+	pAllSettings As %Boolean = 0) As %Status
+{
+	Set tSC = $$$OK
+	If (pProduction = "") {
+		Set pProduction = ##class(Ens.Director).GetActiveProductionName()
+	}
+	Try {
+	Set tSC = ##class(%SYS.Ensemble).CreateDocumentation(pProduction,pIntro,$G(pFormat),.LogFileName,.URL,.BookName,$G(PDFFileName),$G(PDFRenderer),.Params,pAllSettings)
+	} Catch {
+	Set tSC = ##class(%SYS.Ensemble).CreateDocumentation(pProduction,pIntro,$G(pFormat),.LogFileName,.URL,.BookName,$G(PDFFileName),$G(PDFRenderer),.Params)
+	}
+	Do $System.Status.DisplayError(tSC)
+	ZW
+	Quit tSC
+}
+
 ClassMethod GetConfigItems() As %Status
 {
 	Set tStatement = ##class(%SQL.Statement).%New()
