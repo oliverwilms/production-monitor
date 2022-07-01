@@ -376,6 +376,43 @@ ClassMethod OutputTableDefinition(ByRef pDefinition) As %Status
 	Quit 1
 }
 
+ClassMethod OutputTableItemInfo(ByRef pInfo) As %Status
+{
+    Write "<tr>",!
+    Write "<th><b>Enabled</b></th>"	
+    Write "<th>Name </th>"
+	Write "<th>Type </th>"
+	Write "<th><b>Class Name</b></th>"
+    Write "<th>Last Message </th>"
+	Write "<th><b>Queue Size</b></th>"	
+	Write "</tr>",!
+    Set tConfigName = ""
+    For {
+        Set tConfigName = $Order(pInfo(tConfigName),1,tList)
+        If tConfigName = "" { Quit }
+        Set tBusinessType = $ListGet(tList,1)
+        If (tBusinessType = "") Set tBusinessType = "Unknown"
+        If (tBusinessType = "1") Set tBusinessType = "Service"
+        If (tBusinessType = "2") Set tBusinessType = "Process"
+        If (tBusinessType = "3") Set tBusinessType = "Operation"
+        Set tClassName = $ListGet(tList,2)
+        Set tEnabled = $ListGet(tList,3)
+        Set tLastMsg = $ListGet(tList,4)
+        Set tQueSize = $ListGet(tList,5)
+        Set tIcon = ""
+        Set tLamp = $Select(tEnabled:"#80FF80",1:"#808080")
+        Write "<tr>",!
+        Write "<td class='Lamp' style='background:",tLamp,";'>",tIcon,"</td>",!
+        Write "<td>",tConfigName,"</td>",!
+        Write "<td>",tBusinessType,"</td>",!
+        Write "<td>",tClassName,"</td>",!
+        Write "<td>",$Get(tLastMsg),"</td>",!
+        Write "<td>",$Get(tQueSize),"</td>",!
+        Write "</tr>",!
+    }
+    Quit 1
+}
+
 ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
 {
 	Set tSC = ..GetHostInfo(.pInfo)
