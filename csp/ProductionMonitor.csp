@@ -2,7 +2,9 @@
 <head>
 <meta http-equiv="refresh" content="30">
 <script language="Cache" runat="Server">
-Set tSC = ##class(User.ProductionMonitor).GetProductionStatus(.pName,.pState)
+Set tMonitor = "User.ProductionMonitor"
+Set tClassMethod = "GetProductionStatus"
+Set tSC = $CLASSMETHOD(tMonitor,tClassMethod,.pName,.pState)
 </script>
 <!-- Put your page Title here -->
 <title>	Production Monitor </title>
@@ -87,7 +89,7 @@ body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
 				<table border=1>
 					<caption><h4>Incoming</h4></caption>
 					<script language="Cache" runat="Server">
-					Set tClassname = "User.ProductionMonitor"
+					Set tClassname = $Get(tMonitor,"User.ProductionMonitor")
 					Set tClassMethod = "OutputTableIncomingOutgoing"
 					Set tClassMethod = "OutputTablePM"
 					Set tParamBucket = "BusinessService"
@@ -98,7 +100,7 @@ body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
 				<table border=1>
 					<caption><h4>Queues</h4></caption>
 					<script language="Cache" runat="Server">
-					Set tClassname = "User.ProductionMonitor"
+					Set tClassname = $Get(tMonitor,"User.ProductionMonitor")
 					Set tClassMethod = "OutputTablePMQ"
 					Set tParamBucket = ""
 					Set tReturn = $CLASSMETHOD(tClassname,tClassMethod,tParamBucket)
@@ -108,7 +110,7 @@ body { font-family: "Source Sans Pro",Futura,Arial,sans-serif; }
 				<table border=1>
 					<caption><h4>Outgoing</h4></caption>
 					<script language="Cache" runat="Server">
-					Set tClassname = "User.ProductionMonitor"
+					Set tClassname = $Get(tMonitor,"User.ProductionMonitor")
 					Set tClassMethod = "OutputTablePM"
 					Set tParamBucket = "BusinessOperation"
 					Set tReturn = $CLASSMETHOD(tClassname,tClassMethod,tParamBucket)
