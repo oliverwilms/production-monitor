@@ -339,6 +339,37 @@ ClassMethod GetQueueInfo(
 	Quit tSC
 }
 
+ClassMethod OutputTableDefinition(ByRef pDefinition) As %Status
+{
+	Write "<tr>",!
+	Write "<th><b>Enabled</b></th>"	
+	Write "<th>Name </th>"
+	Write "<th>Type </th>"
+	Write "<th><b>Class Name</b></th>"	
+	Write "</tr>",!
+	Set tConfigName = ""
+	For {
+		Set tConfigName = $Order(pDefinition(tConfigName))
+		If tConfigName = "" { Quit }
+		Set tBusinessType = $Get(pDefinition(tConfigName,"BusinessType"))
+		If (tBusinessType = "") Set tBusinessType = "Unknown"
+		If (tBusinessType = "1") Set tBusinessType = "Service"
+		If (tBusinessType = "2") Set tBusinessType = "Process"
+		If (tBusinessType = "3") Set tBusinessType = "Operation"
+		Set tClassName = $Get(pDefinition(tConfigName,"ClassName"))
+		Set tEnabled = $Get(pDefinition(tConfigName,"IsEnabled"))
+		Set tIcon = ""
+		Set tLamp = $Select(tEnabled:"#80FF80",1:"#808080")
+		Write "<tr>",!
+		Write "<td class='Lamp' style='background:",tLamp,";'>",tIcon,"</td>",!
+		Write "<td>",tConfigName,"</td>",!
+		Write "<td>",tBusinessType,"</td>",!
+		Write "<td>",tClassName,"</td>",!
+		Write "</tr>",!
+	}
+	Quit 1
+}
+
 ClassMethod OutputTableIncomingOutgoing(pBucket As %String = "") As %Status
 {
 	Set tSC = ..GetHostInfo(.pInfo)
