@@ -198,6 +198,21 @@ ClassMethod GetHostInfo(
 	Quit tSC
 }
 
+ClassMethod GetProductionItems(
+	pProd As %String,
+	pDefinition As %String,
+	pAutoAdd As %String) As %Status
+{
+	Set tSC = $$$OK
+	If ($Get(pProd) = "") {
+		Set pProd = ##class(Ens.Director).GetActiveProductionName()
+	}
+	Set tProduction = ##class(Ens.Config.Production).%OpenId(pProd)
+	Set tSC = ##class(Ens.Director).getProductionItems(tProduction,.pDefinition,.pAutoAdd)
+	ZW
+	Quit tSC
+}
+
 ClassMethod GetProductionSettings(
 	pProd As %String,
 	Output pSettings) As %Status
