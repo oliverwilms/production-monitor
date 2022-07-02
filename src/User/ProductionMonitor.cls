@@ -387,7 +387,7 @@ ClassMethod OutputTableItemInfo(ByRef pInfo) As %Status
 	Write "<th>Type </th>"
 	Write "<th><b>Class Name</b></th>"
     Write "<th>Last Message </th>"
-	Write "<th><b>Queue Size</b></th>"	
+	Write "<th><b>Remove Item</b></th>"	
 	Write "</tr>",!
     Set tConfigName = ""
     For {
@@ -410,7 +410,9 @@ ClassMethod OutputTableItemInfo(ByRef pInfo) As %Status
         Write "<td>",tBusinessType,"</td>",!
         Write "<td>",tClassName,"</td>",!
         Write "<td>",$Get(tLastMsg),"</td>",!
-        Write "<td>",$Get(tQueSize),"</td>",!
+        Set tClick = """javascript:goClickRemove('"_tConfigName_"');"""
+        Set tRemoveItem = tConfigName
+        Write "<td onclick=",tClick,">",$Get(tRemoveItem),"</td>",!
         Write "</tr>",!
     }
     Quit 1
