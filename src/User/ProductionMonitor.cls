@@ -198,7 +198,9 @@ ClassMethod GetHostInfo(
 	Quit tSC
 }
 
-ClassMethod GetItemInfo(ByRef pInfo, ByRef pSummary) As %Status
+ClassMethod GetItemInfo(
+	ByRef pInfo,
+	ByRef pSummary) As %Status
 {
 	Set tSC = $$$OK
 	&sql(SELECT Max(ID) - 10000000 INTO :tIDFrom From ENS.MessageHeader)
@@ -216,16 +218,17 @@ ClassMethod GetItemInfo(ByRef pInfo, ByRef pSummary) As %Status
 		If (tBusinessType = "") Set tBusinessType = "Unknown"
 		Set tClassName = $Get(pDefinition(tConfigName,"ClassName"))
 		Set tEnabled = $Get(pDefinition(tConfigName,"IsEnabled"))
-        //If pBucket="BusinessService" {
 		Set tID = tConfigName 
-		&sql(SELECT CONVERT(VARCHAR(50),MAX(TimeCreated), 0) INTO :tLastMessage FROM ENS.MessageHeader H WHERE H.ID >:tIDFrom AND SourceBusinessType=1 AND SourceConfigName=:tID AND STATUS=9)
-		//}
+		If (tBusinessType = "1") {
+			&sql(SELECT CONVERT(VARCHAR(50),MAX(TimeCreated), 0) INTO :tLastMessage FROM ENS.MessageHeader H WHERE H.ID >:tIDFrom AND SourceBusinessType=1 AND SourceConfigName=:tID AND STATUS=9)
+		} Else {
+			&sql(SELECT CONVERT(VARCHAR(50),MAX(TimeCreated), 0) INTO :tLastMessage FROM ENS.MessageHeader H WHERE H.ID >:tIDFrom AND TargetConfigName=:tID AND STATUS=9)
+		}
 		//Set pInfo(tBusinessType,tConfigName) = $LB(tClassName,tEnabled,tLastMessage)
 		Set pInfo(tConfigName) = $LB(tBusinessType,tClassName,tEnabled,tLastMessage)
 	}
 	Quit tSC
 }
-
 
 ClassMethod GetItems(
 	ByRef pDefinition As %String,
