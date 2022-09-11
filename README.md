@@ -2,6 +2,24 @@
 
 A reviewer asked what can be monitored by a monitor without a production. I will improve this app by adding a Docker container and a sample production.
 
+## Challenge in building this image
+
+I got an error when I tried to build image:
+Unable to find/open file iris-main.log in current directory
+
+I added ls -la at the end of Dockerfile. I saw the WORKDIR was owned by root.
+
+## Solution
+
+I added this into Dockerfile
+```
+USER root
+RUN mkdir -p /home/irisowner/irisbuild && chown -R ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /home/irisowner/irisbuild
+USER ${ISC_PACKAGE_MGRUSER}
+```
+
+## History
+
 I began working on this app when I saw a post on Developer Community by Mark OReilly:
 
 ```
