@@ -1,6 +1,9 @@
 ARG IMAGE=intersystemsdc/irishealth-community
 ARG IMAGE=intersystemsdc/iris-community
 FROM $IMAGE
+USER root
+RUN mkdir -p /home/irisowner/irisbuild && chown -R ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /home/irisowner/irisbuild
+USER ${ISC_PACKAGE_MGRUSER}
 
 WORKDIR /home/irisowner/irisbuild
 
@@ -15,7 +18,6 @@ ARG NAMESPACE="USER"
 
 #RUN --mount=type=bind,src=.,dst=. \
 RUN \
-    chown irisowner:irisowner . && \
     iris start IRIS && \
 	iris session IRIS < iris.script && \
     ([ $TESTS -eq 0 ] || iris session iris -U $NAMESPACE "##class(%ZPM.PackageManager).Shell(\"test $MODULE -v -only\",1,1)") && \
