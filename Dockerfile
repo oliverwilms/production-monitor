@@ -15,7 +15,7 @@ ARG NAMESPACE="USER"
 
 #RUN --mount=type=bind,src=.,dst=. \
 RUN \
-    chown irisowner:irisowner .
+    chown irisowner:irisowner . && \
     iris start IRIS && \
 	iris session IRIS < iris.script && \
     ([ $TESTS -eq 0 ] || iris session iris -U $NAMESPACE "##class(%ZPM.PackageManager).Shell(\"test $MODULE -v -only\",1,1)") && \
