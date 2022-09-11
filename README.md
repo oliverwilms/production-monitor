@@ -1,5 +1,7 @@
 # production-monitor
 
+A reviewer asked what can be monitored by a monitor without a production. I will improve this app by adding a Docker container and a sample production.
+
 I began working on this app when I saw a post on Developer Community by Mark OReilly:
 
 ```
