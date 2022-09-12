@@ -13,6 +13,7 @@
         </ModuleReference>
         <ModuleReference>
           <Name>interoperability-test</Name>
+          <Version>0.0.*</Version>
         </ModuleReference>
       </Dependencies>
       <SourcesRoot>src</SourcesRoot>
