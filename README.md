@@ -21,7 +21,7 @@ RUN mkdir -p /home/irisowner/irisbuild && chown -R ${ISC_PACKAGE_MGRUSER}:${ISC_
 USER ${ISC_PACKAGE_MGRUSER}
 ```
 ## Online Demo
-You can find online demo here - [Management Portal](https://production-monitor.demo.community.intersystems.com/csp/sys/UtilHome.csp)
+You can find online demo here - [Production Monitor](https://production-monitor.demo.community.intersystems.com/csp/user/ProductionMonitor.csp) or [Management Portal](https://production-monitor.demo.community.intersystems.com/csp/sys/UtilHome.csp)
 
 ## History
 
