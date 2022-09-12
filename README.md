@@ -3,7 +3,7 @@
  [![Reliability Rating](https://community.objectscriptquality.com/api/project_badges/measure?project=intersystems_iris_community%2Fproduction-monitor&metric=reliability_rating)](https://community.objectscriptquality.com/dashboard?id=intersystems_iris_community%2Fproduction-monitor)
 # production-monitor
 
-A reviewer asked what can be monitored by a monitor without a production. I will improve this app by adding a Docker container and a sample production.
+A reviewer asked what can be monitored by a monitor without a production. I have improved this app by adding a Docker container, a sample production, and an Online Demo.
 
 ## Challenge in building this image
 
