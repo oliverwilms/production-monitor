@@ -7,9 +7,10 @@ Parameter PRODUCT = "myapp";
 ClassMethod ConfigTest() As %Status
 {
     New $NAMESPACE
+    Set tNamespace = $NAMESPACE
     Set $NAMESPACE = "%SYS"
     // We need to grant %DB_USER role to /api/monitor Web Application
-    Set tSC = ##class(SYS.Monitor.SAM.Config).AddApplicationClass("User.Monitor", "USER")
+    Set tSC = ##class(SYS.Monitor.SAM.Config).AddApplicationClass("User.Monitor", tNamespace)
     Quit tSC
 }
 
